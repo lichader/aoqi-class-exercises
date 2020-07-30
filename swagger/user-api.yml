@@ -1,0 +1,193 @@
+openapi: "3.0.0"
+
+info:
+  version: "1.0.0"
+  title: api-user-v1
+  description: This API provides operations related to user domain.
+
+servers:
+  - url: "https://{hostname}:{port}/api/user/v1"
+    variables:
+      hostname:
+        default: "localhost"
+      port:
+        default: "8085"
+
+paths:
+  /users:
+    post: 
+      summary: Create a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+            example:
+              data: 
+                username: "richard123"
+                password: "p@ssw0rd1"
+                type: "student"
+                first_name: "Richard"
+                last_name: "Peng"
+                mobile: "041233212"
+                email: "rp@test.com"
+      responses:
+        "200":
+          description: User has been created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: The URI of created resource
+              example: "/users/1"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserResponse"
+              example: 
+                data: 
+                  id: "1"
+                  username: "richard123"
+                  type: "student"
+                  first_name: "Richard"
+                  last_name: "Peng"
+                  mobile: "041233212"
+                  email: "rp@test.com"
+        '400':
+          $ref: "#/components/responses/400"
+        '500':
+          $ref: "#/components/responses/500"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+          
+  /users/{userId}:
+    get:
+      summary: Get a user by id
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        '200':
+          description: User data is retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserByIdResponse"
+              example: 
+                data: 
+                  id: "1"
+                  username: "richard123"
+                  type: "student"
+                  first_name: "Richard"
+                  last_name: "Peng"
+                  mobile: "041233212"
+                  email: "rp@test.com"
+                
+        '404':
+          $ref: "#/components/responses/404"
+        '500':
+          $ref: "#/components/responses/500"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+
+      
+components:
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        applicationErrorCode:
+          type: string
+          example: Error type
+        errorDescription:
+          type: string
+          example: Error description
+    
+    CreateUserRequest:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/UserData"
+          
+    UserData:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: the id of this user
+        username:
+          type: string
+          description: the username
+        password:
+          type: string
+          description: password
+        type:
+          type: string
+          enum: ['student', 'teacher', 'staff']
+          description: The type of this user
+        first_name:
+          type: string
+          description: first name
+        last_name:
+          type: string
+          description: last name
+        mobile:
+          type: string
+          description: mobile number
+        email:
+          type: string
+          description: email address
+          
+    CreateUserResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateUserResponseData"
+          
+    CreateUserResponseData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: System generated id for this user
+          
+    GetUserByIdResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/UserData"
+          
+  responses:
+    ErrorResponse:
+      description: An error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    400:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

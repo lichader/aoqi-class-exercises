@@ -1,0 +1,106 @@
+openapi: "3.0.0"
+
+info:
+  version: "1.0.0"
+  title: api-communication-v1
+  description: This API provides operations related to user domain.
+
+servers:
+  - url: "https://{hostname}:{port}/api/communication/v1"
+    variables:
+      hostname:
+        default: "localhost"
+      port:
+        default: "8080"
+
+paths:
+  /communications:
+    post: 
+      summary: Send a correspondence to designated destination such as email, mobile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommunicationRequest"
+            example:
+              data: 
+                destination: "rp@test.com"
+                type: "email"
+                content: "Your registration is successful. Thanks for registering"
+                
+      responses:
+        "204":
+          description: A communication is sent
+        '400':
+          $ref: "#/components/responses/400"
+        '500':
+          $ref: "#/components/responses/500"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+ 
+components:
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        applicationErrorCode:
+          type: string
+          example: Error type
+        errorDescription:
+          type: string
+          example: Error description
+    
+    CreateCommunicationRequest:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/CommunicationData"
+          
+    CommunicationData:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: the id of this user
+        destination:
+          type: string
+          description: where the correspondence is sent to
+        type:
+          type: string
+          enum: ["email", "sms"]
+          description: the type of correspondence
+        content:
+          type: string
+          description: The content of this correspondence
+          
+          
+          
+  responses:
+    ErrorResponse:
+      description: An error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    400:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
