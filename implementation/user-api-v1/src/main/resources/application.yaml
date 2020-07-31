@@ -6,11 +6,14 @@ spring:
     password: password
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.H2Dialect
   h2:
     console:
       enabled: true
 
-flyway:
-  enabled: false
+server:
+  servlet:
+    context-path: /api/user/v1/
+  error:
+    include-message: always

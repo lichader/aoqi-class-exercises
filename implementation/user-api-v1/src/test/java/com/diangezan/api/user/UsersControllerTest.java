@@ -11,11 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,6 +32,9 @@ public class UsersControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private RestTemplate restTemplate;
+
     @Test
     public void createUser_Success200() throws Exception {
         var mockDbSaveResult = new DbUser();
@@ -41,6 +47,7 @@ public class UsersControllerTest {
         mockDbSaveResult.setMobile("041233212");
         Mockito.when(userRepository.save(any(DbUser.class))).thenReturn(mockDbSaveResult);
 
+        Mockito.when(restTemplate.postForEntity(any(String.class), any(), any())).thenReturn(null);
 
         var userInRequest = new DbUser();
         userInRequest.setUsername("ripeng");
@@ -62,6 +69,9 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.data.id").value(1))
                 .andExpect(jsonPath("$.data.username").value("ripeng"))
                 .andExpect(jsonPath("$.data.password").isEmpty());
+
+        verify(userRepository, times(1)).save(any(DbUser.class));
+        verify(restTemplate, times(1)).postForEntity(any(String.class), any(), any());
     }
 
     private String asJsonString(Object request) throws JsonProcessingException {
