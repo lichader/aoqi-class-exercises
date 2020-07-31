@@ -55,6 +55,8 @@ paths:
                   email: "rp@test.com"
         '400':
           $ref: "#/components/responses/400"
+        '409':
+          $ref: "#/components/responses/409"
         '500':
           $ref: "#/components/responses/500"
         default:
@@ -148,14 +150,7 @@ components:
       type: object
       properties:
         data:
-          $ref: "#/components/schemas/CreateUserResponseData"
-          
-    CreateUserResponseData:
-      type: object
-      properties:
-        id:
-          type: string
-          description: System generated id for this user
+          $ref: "#/components/schemas/UserData"
           
     GetUserByIdResponse:
       type: object
@@ -180,6 +175,13 @@ components:
             
     404:
       description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    409:
+      description: Conflict
       content:
         application/json:
           schema:
