@@ -1,0 +1,5 @@
+server:
+  servlet:
+    context-path: /api/communication/v1/
+  error:
+    include-message: always

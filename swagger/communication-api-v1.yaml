@@ -60,9 +60,6 @@ components:
     CommunicationData:
       type: object
       properties:
-        id: 
-          type: string
-          description: the id of this user
         destination:
           type: string
           description: where the correspondence is sent to
