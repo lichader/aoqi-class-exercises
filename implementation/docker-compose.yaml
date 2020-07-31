@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  user-api-v1:
+    image: lichader/user-api-v1
+    ports:
+      - 8080:8080
+  communication-api-v1:
+    image: lichader/communication-api-v1
+    ports:
+      - 8081:8081
